@@ -122,7 +122,7 @@ public class PessoaController {
 		return andView;
 	}
 	
-	@GetMapping("**/editarpessoa/{idpessoa}")
+	@RequestMapping(method = RequestMethod.GET, value ="**/editarpessoa/{idpessoa}")
 	public ModelAndView editar (@PathVariable("idpessoa") Long idpessoa) {
 		
 		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
