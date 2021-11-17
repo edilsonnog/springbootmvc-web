@@ -125,13 +125,14 @@ public class PessoaController {
 	@GetMapping("editarpessoa/{idpessoa}")
 	public ModelAndView editar(@PathVariable("idpessoa") Long idpessoa) {
 		
-		Optional<Pessoa> pessoaOptional = pessoaRepository.findById(idpessoa);
-		
+		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
+
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-		Pessoa pessoa = pessoaOptional.get();
-		modelAndView.addObject("pessoaobj", pessoa);
+		modelAndView.addObject("pessoas", pessoaRepository.findAll(PageRequest.of(0, 5, Sort.by("nome"))));
+		modelAndView.addObject("pessoaobj", pessoa.get());
 		modelAndView.addObject("profissoes", profissaoRepository.findAll());
 		return modelAndView;
+		
 	}
 	
 	@GetMapping("/removerpessoa/{idpessoa}")
@@ -149,16 +150,16 @@ public class PessoaController {
 	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa,
 			@RequestParam("pesqsexo") String pesqsexo, @PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
 		
-		Page<Pessoa> pessoas = null;
+		Page<Pessoa> pessoasPage  = null;
 		
 		if (pesqsexo != null && !pesqsexo.isEmpty()) {
-			pessoas = pessoaRepository.findPessoaBySexoPage(nomepesquisa, pesqsexo, pageable);
+			pessoasPage  = pessoaRepository.findPessoaBySexoPage(nomepesquisa, pesqsexo, pageable);
 		} else {
-			pessoas = pessoaRepository.findPessoaByNamePage(nomepesquisa, pageable);
+			pessoasPage  = pessoaRepository.findPessoaByNamePage(nomepesquisa, pageable);
 		}
 		
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-		modelAndView.addObject("pessoas", pessoas);
+		modelAndView.addObject("pessoas", pessoasPage);
 		modelAndView.addObject("pessoaobj", new Pessoa());
 		modelAndView.addObject("nomepesquisa", nomepesquisa);
 		return modelAndView;
